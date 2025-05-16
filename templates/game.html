@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Hangman Game</title>
+</head>
+<body>
+    <h2>Hangman Game</h2>
+    <p>Word: 
+        {% for letter in game.word_to_guess %}
+            {% if letter in game.guessed_letters %}
+                {{ letter }}
+            {% else %}
+                _
+            {% endif %}
+        {% endfor %}
+    </p>
+    <p>Guessed Letters: {{ game.guessed_letters }}</p>
+    <p>Incorrect Guesses: {{ game.incorrect_guesses }}</p>
+    <p>Status: {{ game.status }}</p>
+
+    {% if game.status == 'ongoing' %}
+    <form method="post">
+        <label for="letter">Guess a letter:</label>
+        <input type="text" name="letter" maxlength="1" required>
+        <button type="submit">Guess</button>
+    </form>
+    {% endif %}
+    <br>
+    <a href="{{ url_for('home') }}">Back to Home</a>
+</body>
+</html>

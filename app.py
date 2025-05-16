@@ -10,62 +10,46 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 # 📌 Create the database object
 db = SQLAlchemy(app)
 
-# 🎬 Sample movie data
-movies = [
-    {"id": 1, "title": "Avengers: Endgame", "price": 12},
-    {"id": 2, "title": "Spider-Man: No Way Home", "price": 10},
-    {"id": 3, "title": "Inception", "price": 8}
-]
-
-# 📌 Define the Booking Model (Table)
-class Booking(db.Model):
-    id = db.Column(db.Integer, primary_key=True)  # Unique ID for each booking
-    name = db.Column(db.String(100), nullable=False)  # User's name
-    movie_title = db.Column(db.String(100), nullable=False)  # Movie booked
-    seats = db.Column(db.Integer, nullable=False)  # Number of seats booked
-
-# 📌 Create the database table
-with app.app_context():
-    db.create_all()
+class Game(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    word_to_guess = db.Column(db.String(100), nullable=False)
+    guessed_letters = db.Column(db.String(100), default="")
+    incorrect_guesses = db.Column(db.Integer, default=0)
+    status = db.Column(db.String(20), default="ongoing")
 
 @app.route('/')
 def home():
-    return render_template('index.html', movies=movies)
+    return render_template('index.html')
 
-@app.route('/book/<int:movie_id>', methods=['GET', 'POST'])
-def book(movie_id):
-    # Find the movie using movie_id
-    movie = next((m for m in movies if m["id"] == movie_id), None)
+@app.route('/new_game', methods=['POST'])
+def new_game():
+    word = request.form.get('word').lower()  # Later you can automate random words
+    new_game = Game(word_to_guess=word)
+    db.session.add(new_game)
+    db.session.commit()
+    return redirect(url_for('play_game', game_id=new_game.id))
 
-    if not movie:
-        return "Movie not found", 404
+@app.route('/game/<int:game_id>', methods=['GET', 'POST'])
+def play_game(game_id):
+    game = Game.query.get_or_404(game_id)
 
     if request.method == 'POST':
-        name = request.form['name']
-        seats = int(request.form['seats'])
+        letter = request.form.get('letter').lower()
+        if letter not in game.guessed_letters:
+            game.guessed_letters += letter
+            if letter not in game.word_to_guess:
+                game.incorrect_guesses += 1
+        
+        # Update status
+        if all(l in game.guessed_letters for l in set(game.word_to_guess)):
+            game.status = 'won'
+        elif game.incorrect_guesses >= 6:
+            game.status = 'lost'
 
-        # 📌 Create a new Booking and save it to the database
-        new_booking = Booking(name=name, movie_title=movie["title"], seats=seats)
-        db.session.add(new_booking)
         db.session.commit()
 
-        return redirect(url_for('confirmation', name=name, movie_title=movie["title"], seats=seats))
-
-    return render_template('book.html', movie=movie)
-
-@app.route('/confirmation')
-def confirmation():
-    name = request.args.get('name')
-    movie_title = request.args.get('movie_title')
-    seats = request.args.get('seats')
-    return render_template('confirmation.html', name=name, movie_title=movie_title, seats=seats)
-
-@app.route('/admin/bookings')
-def view_bookings():
-    bookings = Booking.query.all()
-    return render_template('bookings.html', bookings=bookings)
+    return render_template('game.html', game=game)
 
 
 if __name__ == '__main__':
-    
     app.run(debug=True)
