@@ -15,11 +15,11 @@
             {% endif %}
         {% endfor %}
     </p>
-    <p>Guessed Letters: {{ game.guessed_letters }}</p>
-    <p>Incorrect Guesses: {{ game.incorrect_guesses }}</p>
+    <p>Guessed Letters: {{ game.guessed_letters | sort_letters | join(', ') }}</p>
+    <p>Amount of Fails: {{ game.incorrect_guesses }}</p>
     <p>Status: {{ game.status }}</p>
 
-    {% if game.status == 'ongoing' %}
+    {% if game.status == 'Playing' %}
     <form method="post">
         <label for="letter">Guess a letter:</label>
         <input type="text" name="letter" maxlength="1" required>

@@ -10,12 +10,17 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 # 📌 Create the database object
 db = SQLAlchemy(app)
 
+# 📌 Custom Jinja filter to sort and join guessed letters
+@app.template_filter('sort_letters')
+def sort_letters(s):
+    return sorted(set(s))  # Removes duplicates and sorts letters
+
 class Game(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     word_to_guess = db.Column(db.String(100), nullable=False)
     guessed_letters = db.Column(db.String(100), default="")
     incorrect_guesses = db.Column(db.Integer, default=0)
-    status = db.Column(db.String(20), default="ongoing")
+    status = db.Column(db.String(20), default="Playing")
 
 @app.route('/')
 def home():
@@ -43,7 +48,7 @@ def play_game(game_id):
         # Update status
         if all(l in game.guessed_letters for l in set(game.word_to_guess)):
             game.status = 'You won!'
-        elif game.incorrect_guesses >= 12:
+        elif game.incorrect_guesses >= 6:
             game.status = (f"Ran out of tries! Word: {game.word_to_guess}")
         
         db.session.commit()
