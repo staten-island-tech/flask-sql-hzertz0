@@ -42,14 +42,13 @@ def play_game(game_id):
         
         # Update status
         if all(l in game.guessed_letters for l in set(game.word_to_guess)):
-            game.status = 'won'
-        elif game.incorrect_guesses >= 6:
-            game.status = 'lost'
-
+            game.status = 'You won!'
+        elif game.incorrect_guesses >= 12:
+            game.status = (f"Ran out of tries! Word: {game.word_to_guess}")
+        
         db.session.commit()
 
     return render_template('game.html', game=game)
-
 
 if __name__ == '__main__':
     app.run(debug=True)
