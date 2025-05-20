@@ -39,21 +39,26 @@ def play_game(game_id):
     game = Game.query.get_or_404(game_id)
 
     if request.method == 'POST':
-        letter = request.form.get('letter').lower()
-        if letter not in game.guessed_letters:
-            game.guessed_letters += letter
-            if letter not in game.word_to_guess:
-                game.incorrect_guesses += 1
-        
-        # Update status
-        if all(l in game.guessed_letters for l in set(game.word_to_guess)):
-            game.status = 'You won!'
-        elif game.incorrect_guesses >= 6:
-            game.status = (f"Ran out of tries! Word: {game.word_to_guess}")
-        
-        db.session.commit()
+        letter = request.form.get('letter', '').lower()
 
+        # ✅ Accept only a–z guesses; ignore punctuation/space submits
+        if letter.isalpha() and letter not in game.guessed_letters:
+            game.guessed_letters += letter
+            if letter not in game.word_to_guess.lower():
+                game.incorrect_guesses += 1
+
+    # ✅ Re‑compute game status every request
+    letters_to_guess = {c.lower() for c in game.word_to_guess if c.isalpha()}
+    if letters_to_guess.issubset(set(game.guessed_letters)):
+        game.status = 'You won!'
+    elif game.incorrect_guesses >= 12:
+        game.status = f'Ran out of tries! Word: {game.word_to_guess}'
+    else:
+        game.status = 'Playing'
+
+    db.session.commit()
     return render_template('game.html', game=game)
+
 
 if __name__ == '__main__':
     app.run(debug=True)

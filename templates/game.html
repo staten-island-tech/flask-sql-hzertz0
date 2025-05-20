@@ -3,30 +3,42 @@
 <head>
     <meta charset="UTF-8">
     <title>Hangman Game</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
 </head>
 <body>
-    <h2>Hangman Game</h2>
-    <p>Word: 
-        {% for letter in game.word_to_guess %}
-            {% if letter in game.guessed_letters %}
-                {{ letter }}
-            {% else %}
-                _
-            {% endif %}
-        {% endfor %}
-    </p>
-    <p>Guessed Letters: {{ game.guessed_letters | sort_letters | join(', ') }}</p>
-    <p>Amount of Fails: {{ game.incorrect_guesses }}</p>
-    <p>Status: {{ game.status }}</p>
+    <div class="container">
+        <h2>Hangman Game</h2>
 
-    {% if game.status == 'Playing' %}
-    <form method="post">
-        <label for="letter">Guess a letter:</label>
-        <input type="text" name="letter" maxlength="1" required>
-        <button type="submit">Guess</button>
-    </form>
-    {% endif %}
-    <br>
-    <a href="{{ url_for('home') }}">Back to Home</a>
+        <img src="{{ url_for('static', filename=game.incorrect_guesses|string + '.jpg') }}" alt="Hangman Image" class="hangman">
+
+        <p class="word">
+            {% for ch in game.word_to_guess %}
+                {% if ch == ' ' %}              {# show blank gap #}
+                    &nbsp;&nbsp;
+                {% elif not ch.isalpha() %}     {# punctuation shows instantly #}
+                    {{ ch }}
+                {% elif ch.lower() in game.guessed_letters %}
+                    {{ ch }}
+                {% else %}
+                    _
+                {% endif %}
+            {% endfor %}
+        </p>
+        
+
+        <p>Guessed Letters: {{ game.guessed_letters | list | sort | join(', ') }}</p>
+        <p>Amount of Fails: {{ game.incorrect_guesses }}</p>
+        <p>Status: {{ game.status }}</p>
+
+        {% if game.status == 'Playing' %}
+        <form method="post">
+            <label for="letter">Guess a letter:</label>
+            <input type="text" name="letter" maxlength="1" required>
+            <button type="submit">Guess</button>
+        </form>
+        {% endif %}
+
+        <a href="{{ url_for('home') }}">← Back to Home</a>
+    </div>
 </body>
 </html>
