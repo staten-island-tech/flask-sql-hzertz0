@@ -30,15 +30,58 @@
         <p>Amount of Fails: {{ game.incorrect_guesses }}</p>
         <p>Status: {{ game.status }}</p>
 
+        <div class="keyboard">
+            {% for row in ['QWERTYUIOP', 'ASDFGHJKL', 'ZXCVBNM'] %}
+                <div class="key-row">
+                    {% for key in row %}
+                        <form method="post" style="display: inline;">
+                            <input type="hidden" name="letter" value="{{ key.lower() }}">
+                            <button type="submit" class="key-btn" {% if key.lower() in game.guessed_letters %}disabled{% endif %}>
+                                {{ key }}
+                            </button>
+                        </form>
+                    {% endfor %}
+                </div>
+            {% endfor %}
+        </div>
+
         {% if game.status == 'Playing' %}
-        <form method="post">
-            <label for="letter">Guess a letter:</label>
-            <input type="text" name="letter" maxlength="1" required>
-            <button type="submit">Guess</button>
-        </form>
         {% endif %}
 
         <a href="{{ url_for('home') }}">← Back to Home</a>
     </div>
 </body>
 </html>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const gameStatus = "{{ game.status }}".toLowerCase();
+
+        // Only allow typing if the game is still going
+        if (gameStatus === 'playing') {
+            document.addEventListener('keydown', function (e) {
+                const letter = e.key.toLowerCase();
+
+                // Check if it's a letter a-z
+                if (/^[a-z]$/.test(letter)) {
+                    // Prevent duplicate submissions for guessed letters
+                    const guessed = "{{ game.guessed_letters|lower }}";
+                    if (!guessed.includes(letter)) {
+                        // Create and submit a form dynamically
+                        const form = document.createElement('form');
+                        form.method = 'POST';
+                        const input = document.createElement('input');
+                        input.type = 'hidden';
+                        input.name = 'letter';
+                        input.value = letter;
+                        form.appendChild(input);
+                        document.body.appendChild(form);
+                        form.submit();
+                    }
+                }
+            });
+        }
+    });
+</script>
+
+

@@ -51,7 +51,7 @@ def play_game(game_id):
     letters_to_guess = {c.lower() for c in game.word_to_guess if c.isalpha()}
     if letters_to_guess.issubset(set(game.guessed_letters)):
         game.status = 'You won!'
-    elif game.incorrect_guesses >= 12:
+    elif game.incorrect_guesses >= 6:
         game.status = f'Ran out of tries! Word: {game.word_to_guess}'
     else:
         game.status = 'Playing'

@@ -82,3 +82,68 @@ a:hover {
     text-decoration: underline;
 }
 
+.password-wrapper {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: 10px;
+}
+
+.password-wrapper input[type="password"],
+.password-wrapper input[type="text"] {
+    flex: 1;
+    padding: 10px;
+    font-size: 16px;
+    width: 250px;
+    border: 1px solid #ccc;
+    border-radius: 8px 0 0 8px;
+    margin: 0;
+}
+
+.eye-button {
+    padding: 10px;
+    font-size: 18px;
+    border: 1px solid #005fa3;
+    background-color: #005fa3;
+    border-left: none;
+    border-radius: 0 8px 8px 0;
+    cursor: pointer;
+}
+
+.eye-button:hover {
+    background-color: #ddd;
+}
+
+.keyboard {
+    margin-top: 30px;
+}
+
+.key-row {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 10px;
+}
+
+.key-btn {
+    padding: 10px 15px;
+    margin: 2px;
+    font-size: 16px;
+    font-weight: bold;
+    border: 1px solid #ccc;
+    background-color: #000000;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.key-btn:hover {
+    background-color: #e0e0e0;
+}
+
+.key-btn:disabled {
+    background-color: #666;
+    color: #ccc;
+    cursor: not-allowed;
+}
+
+

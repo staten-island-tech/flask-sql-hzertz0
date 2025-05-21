@@ -9,11 +9,23 @@
 <body>
     <div class="container">
         <h1>Welcome to Hangman</h1>
-        <p>Enter a secret word to start a new game:</p>
         <form action="{{ url_for('new_game') }}" method="post">
-            <input type="text" name="word" placeholder="Type a word..." required>
+            <label for="word">Enter a word to guess:</label><br>
+            
+            <div class="password-wrapper">
+                <input type="password" name="word" id="wordInput" required>
+                <button type="button" onclick="toggleVisibility()" class="eye-button">👁</button>
+            </div>
+            
             <button type="submit">Start Game</button>
         </form>
     </div>
 </body>
 </html>
+
+<script>
+    function toggleVisibility() {
+        const input = document.getElementById('wordInput');
+        input.type = input.type === 'password' ? 'text' : 'password';
+    }
+</script>
