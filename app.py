@@ -59,6 +59,34 @@ def play_game(game_id):
     db.session.commit()
     return render_template('game.html', game=game)
 
+import json
+import random
+
+@app.route('/single_player', methods=['GET'])
+def single_player():
+    with open('words.json') as f:
+        words = json.load(f)['words']
+    random_word = random.choice(words)
+    new_game = Game(word_to_guess=random_word)
+    db.session.add(new_game)
+    db.session.commit()
+    return redirect(url_for('play_game', game_id=new_game.id))
+
+
+@app.route('/admin', methods=['GET', 'POST'])
+def admin_panel():
+    if request.method == 'POST':
+        word = request.form.get('new_word').lower()
+        with open('words.json', 'r+') as f:
+            data = json.load(f)
+            if word not in data['words']:
+                data['words'].append(word)
+                f.seek(0)
+                json.dump(data, f, indent=4)
+                f.truncate()
+        return redirect(url_for('admin_panel'))
+    return render_template('admin.html')
+
 
 if __name__ == '__main__':
     app.run(debug=True)

@@ -2,30 +2,39 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Hangman Game</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
 </head>
 <body>
     <div class="container">
         <h1>Welcome to Hangman</h1>
+
+        <!-- 2-Player Game Form -->
         <form action="{{ url_for('new_game') }}" method="post">
-            <label for="word">Enter a word to guess:</label><br>
-            
+            <label for="word">Enter a word to guess:</label>
             <div class="password-wrapper">
-                <input type="password" name="word" id="wordInput" required>
-                <button type="button" onclick="toggleVisibility()" class="eye-button">👁</button>
+                <input type="password" name="word" id="word-input" required>
+                <button type="button" class="eye-button" onclick="toggleVisibility()">👁️</button>
             </div>
-            
-            <button type="submit">Start Game</button>
+            <button type="submit">Start 2-Player Game</button>
+        </form>
+
+        <!-- Single Player Game Form -->
+        <form action="{{ url_for('single_player') }}" method="get">
+            <button type="submit">Start Single Player Game</button>
+        </form>
+
+        <!-- Admin Panel Access -->
+        <form action="{{ url_for('admin_panel') }}" method="get">
+            <button type="submit">Admin Panel</button>
         </form>
     </div>
+
+    <script>
+        function toggleVisibility() {
+            const input = document.getElementById('word-input');
+            input.type = input.type === 'password' ? 'text' : 'password';
+        }
+    </script>
 </body>
 </html>
-
-<script>
-    function toggleVisibility() {
-        const input = document.getElementById('wordInput');
-        input.type = input.type === 'password' ? 'text' : 'password';
-    }
-</script>

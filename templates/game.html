@@ -24,9 +24,7 @@
                 {% endif %}
             {% endfor %}
         </p>
-        
 
-        <p>Guessed Letters: {{ game.guessed_letters | list | sort | join(', ') }}</p>
         <p>Amount of Fails: {{ game.incorrect_guesses }}</p>
         <p>Status: {{ game.status }}</p>
 
