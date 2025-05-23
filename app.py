@@ -4,7 +4,7 @@ from flask_sqlalchemy import SQLAlchemy
 app = Flask(__name__)
 
 # 📌 Tell Flask where the database file will be stored
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///bookings.db'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///hangman.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 # 📌 Create the database object
@@ -61,17 +61,34 @@ def play_game(game_id):
 
 import json
 import random
+from flask import session
+
+app.secret_key = 'idk_what_this_is'
 
 @app.route('/single_player', methods=['GET'])
 def single_player():
     with open('words.json') as f:
         words = json.load(f)['words']
-    random_word = random.choice(words)
+
+    # Get last word safely
+    last_word = session.get('last_word')
+
+    # Try to exclude the last word, if it's valid and there are other options
+    available_words = words.copy()
+    if last_word and len(words) > 1:
+        available_words = [word for word in words if word != last_word]
+
+    # Pick a new word from available list
+    random_word = random.choice(available_words)
+
+    # Save this word to session to prevent repeat next time
+    session['last_word'] = random_word
+
+    # Start a new game
     new_game = Game(word_to_guess=random_word)
     db.session.add(new_game)
     db.session.commit()
     return redirect(url_for('play_game', game_id=new_game.id))
-
 
 @app.route('/admin', methods=['GET', 'POST'])
 def admin_panel():

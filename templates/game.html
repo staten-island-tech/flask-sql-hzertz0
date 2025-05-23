@@ -27,6 +27,11 @@
 
         <p>Amount of Fails: {{ game.incorrect_guesses }}</p>
         <p>Status: {{ game.status }}</p>
+            {% if game.status != 'Playing' %}
+                <form action="{{ url_for('single_player') }}" method="get">
+                    <button type="submit">Next Game</button>
+                </form>
+            {% endif %}
 
         <div class="keyboard">
             {% for row in ['QWERTYUIOP', 'ASDFGHJKL', 'ZXCVBNM'] %}
