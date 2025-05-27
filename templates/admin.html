@@ -3,15 +3,22 @@
 <head>
     <title>Admin Panel</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <style>
+        .bottom-link {
+            margin-top: auto;
+        }
+    </style>
 </head>
 <body>
     <div class="container">
-        <h2>Admin Panel</h2>
-        <form method="post">
-            <input type="text" name="new_word" placeholder="Enter new word" required>
-            <button type="submit">Add Word</button>
-        </form>
-        <a href="{{ url_for('home') }}">← Back to Home</a>
+        <div>
+            <h2>Admin Panel</h2>
+            <form method="post">
+                <input type="text" name="new_word" placeholder="Enter new word" required>
+                <button type="submit">Add Word</button>
+            </form>
+        </div>
+            <a href="{{ url_for('home') }}">← Logout</a>
     </div>
 </body>
 </html>

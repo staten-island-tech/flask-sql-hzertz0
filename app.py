@@ -90,8 +90,25 @@ def single_player():
     db.session.commit()
     return redirect(url_for('play_game', game_id=new_game.id))
 
+# Change this to a secure password
+ADMIN_PASSWORD = "freeadmin2019"
+
+@app.route('/admin_login', methods=['GET', 'POST'])
+def admin_login():
+    error = None
+    if request.method == 'POST':
+        if request.form.get('password') == ADMIN_PASSWORD:
+            session['admin'] = True
+            return redirect(url_for('admin_panel'))
+        else:
+            error = "Incorrect password"
+    return render_template('admin_login.html', error=error)
+
 @app.route('/admin', methods=['GET', 'POST'])
 def admin_panel():
+    if not session.get('admin'):
+        return redirect(url_for('admin_login'))
+
     if request.method == 'POST':
         word = request.form.get('new_word').lower()
         with open('words.json', 'r+') as f:
@@ -102,8 +119,13 @@ def admin_panel():
                 json.dump(data, f, indent=4)
                 f.truncate()
         return redirect(url_for('admin_panel'))
+
     return render_template('admin.html')
 
+@app.route('/admin_logout')
+def admin_logout():
+    session.pop('admin', None)
+    return redirect(url_for('home'))
 
 if __name__ == '__main__':
     app.run(debug=True)

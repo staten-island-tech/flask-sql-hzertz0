@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Admin Login</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h2>Admin Login</h2>
+        <form method="post">
+            <label for="password">Enter Password:</label>
+            <div class="password-wrapper">
+                <input type="password" name="password" id="password-input" required>
+                <button type="button" class="eye-button" onclick="toggleVisibility()">👁️</button>
+            </div>
+            <button type="submit">Login</button>
+        </form>
+        <a href="{{ url_for('home') }}">← Back to Home</a>
+    </div>
+
+    <script>
+        function toggleVisibility() {
+            const input = document.getElementById("password-input");
+            if (input.type === "password") {
+                input.type = "text";
+            } else {
+                input.type = "password";
+            }
+        }
+    </script>
+</body>
+</html>
